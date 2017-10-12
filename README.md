@@ -1,5 +1,3 @@
-# Deprecated sample - not maintained anymore (Summer 2016)
-
 # workflow-python
 
 Demonstrate the Autodesk View and Data API authorisation and translation process in a Python command line script.
@@ -16,15 +14,7 @@ It closely follows the steps described in the documentation:
 
 * https://developer.autodesk.com > Get Started
 * http://developer.api.autodesk.com/documentation/v1/index.html
-* http://developer.api.autodesk.com/documentation/v1/vs_quick_start.html
-
-In order to make use of this sample, you need to register your consumer key, of course:
-
-* https://developer.autodesk.com > My Apps
-
-This provides the credentials to save in the file [credentials.txt](credentials.txt).
-
-Currently still work in progress.
+* http://developer.api.autodesk.com/documentation/v1/vs_quick_start.html 
 
 At the moment, you should probably take a look at the [workflow-curl-view.and.data.api](https://github.com/Developer-Autodesk/workflow-curl-view.and.data.api) sample using Unix shell scripts and cURL.
 It is more fundamental than this Python sample and provides more working functionality than what is planned for this sample.
@@ -44,8 +34,11 @@ Standard Python installation, the Python requests library, maybe switch to the P
 
 
 ## Setup/Usage Instructions
+* In order to make use of this sample, you need to register your consumer key, Request your consumer key/secret key from https://developer.autodesk.com. This provides the credentials to save in the file [credentials.txt](credentials.txt).
 
-Request your consumer key/secret key from https://developer.autodesk.com.
+* prepare a test model in the relative path, say samples/mytestmodel.rvt
+* replace the default model name at line 50 
+* run the pythin script in any IDE. 
 
 
 ## License
@@ -54,4 +47,6 @@ workflow-python is licensed under the terms of the [MIT License](http://opensour
 
 ## Written by
 
-Jeremy Tammik, Autodesk Inc.
+Jeremy Tammik
+migrated by Xiaodong Liang
+ Autodesk Inc.
