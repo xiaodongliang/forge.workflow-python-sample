@@ -9,7 +9,7 @@ from optparse import OptionParser
 _version = '1.0'
 
 BASE_URL = 'https://developer.api.autodesk.com/'
-BUCKET_KEY = 'jtbucket'
+BUCKET_KEY = 'xd_test_python_bucket'
 
 _file_missing_prompt = "Error: specified %s file '%s' does not exist.\n"
 
@@ -47,7 +47,7 @@ def main():
   parser = OptionParser( usage, version = progname + ' ' + _version )
   parser.add_option( '-b', '--bucketskip', action='store_true', dest='bucketskip', help = 'skip bucket creation' )
   parser.add_option( '-c', '--credentials', dest='credentials_filename', help = 'credentials filename', metavar="FILE", default='credentials.txt' )
-  parser.add_option( '-m', '--model', dest='model_filename', help = 'model filename', metavar="FILE", default='samples/Au.obj' )
+  parser.add_option( '-m', '--model', dest='model_filename', help = 'model filename', metavar="FILE", default='samples/mytestmodel.rvt' )
   parser.add_option( '-q', '--quiet', dest='quiet', action='store_true', default=False, help = 'reduce verbosity' )
   parser.add_option( '-u', '--urn', dest='urn', help = 'specify urn of already uploaded model file', default='' )
 
@@ -99,7 +99,9 @@ def main():
   data = {
     'client_id' : consumer_key,
     'client_secret' : consumer_secret,
-    'grant_type' : 'client_credentials'
+    'grant_type' : 'client_credentials',
+    'scope':  'data:read data:write bucket:create bucket:read'
+    
   }
 
   headers = {
@@ -138,7 +140,7 @@ def main():
     # -H "Authorization: Bearer lEaixuJ5wXby7Trk6Tb77g6Mi8IL" \
     # https://developer.api.autodesk.com/oss/v1/buckets/mybucket/details
 
-    url = BASE_URL + 'oss/v1/buckets/' + BUCKET_KEY + '/details'
+    url = BASE_URL + 'oss/v2/buckets/' + BUCKET_KEY + '/details'
 
     headers = {
       'Authorization' : 'Bearer ' + access_token
@@ -176,11 +178,11 @@ def main():
       # --data '{\"bucketKey\":\"mybucket\",\"policy\":\"transient\"}' \
       # https://developer.api.autodesk.com/oss/v1/buckets
 
-      url = BASE_URL + 'oss/v1/buckets'
+      url = BASE_URL + 'oss/v2/buckets'
 
       data = {
         'bucketKey' : BUCKET_KEY,
-        'policy' : 'transient'
+        'policyKey' : 'transient'
       }
 
       headers = {
@@ -233,7 +235,7 @@ def main():
     model_filename = os.path.basename( model_filepath ).replace(' ', '+')
     #model_filename = model_filename.replace('.','_')
 
-    url = 'https://developer.api.autodesk.com/oss/v1/buckets/' + BUCKET_KEY + '/objects/' + model_filename
+    url = 'https://developer.api.autodesk.com/oss/v2/buckets/' + BUCKET_KEY + '/objects/' + model_filename
 
     headers = {
       'Content-Type' : 'application/octet-stream',
@@ -279,7 +281,8 @@ def main():
       #   } ]
       # }
     content = eval(r.content)
-    urn = content['objects'][0]['id']
+    #urn = content['objects'][0]['id']
+    urn = content['objectId']
     print 'id:', urn
 
     # import base64
@@ -297,10 +300,22 @@ def main():
   # -i -d "{\"urn\":\"dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bXlidWNrZXQvc2t5c2NwcjEuM2Rz\"}" \
   # https://developer.api.autodesk.com/viewingservice/v1/register
 
-  url = BASE_URL + 'viewingservice/v1/register'
+  url = BASE_URL + 'modelderivative/v2/designdata/job'
 
   data = {
-    'urn' : urn,
+    "input": {
+        "urn": urn
+    },
+    "output": {
+        "destination": {
+            "region": "us"
+        },
+        "formats": [
+        {
+            "type": "svf",
+            "views":["2d", "3d"]
+        }]
+    }
   }
 
   headers = {
