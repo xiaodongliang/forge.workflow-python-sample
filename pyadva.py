@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # pyadva.py - demonstrate Autodesk View and Data API authorisation and translation process in Python
 #
-# Copyright (C) 2014 by Jeremy Tammik, Autodesk Inc.
+# Copyright (C) 2017 by Forge Partnership, Autodesk Inc.
 #
 import base64, json, md5, os.path, requests, shutil, time
 from optparse import OptionParser
 
-_version = '1.0'
+_version = '2.0'
 
 BASE_URL = 'https://developer.api.autodesk.com/'
-BUCKET_KEY = 'xd_test_python_bucket'
+BUCKET_KEY = '<your bucket name>'
 
 _file_missing_prompt = "Error: specified %s file '%s' does not exist.\n"
 
@@ -90,7 +90,7 @@ def main():
   # Step 2: Get your access token
 
   # curl -k \
-  # --data "client_id=obQDn8P0GanGFQha4ngKKVWcxwyvFAGE&client_secret=eUruM8HRyc7BAQ1e&grant_type=client_credentials" \
+  # --data "client_id=<your client id>&client_secret=<your client secret>&grant_type=client_credentials&scope=data:read data:write bucket:create bucket:read" \
   # https://developer.api.autodesk.com/authentication/v1/authenticate \
   # --header "Content-Type: application/x-www-form-urlencoded"
 
@@ -138,7 +138,7 @@ def main():
 
     # curl -k -X GET \
     # -H "Authorization: Bearer lEaixuJ5wXby7Trk6Tb77g6Mi8IL" \
-    # https://developer.api.autodesk.com/oss/v1/buckets/mybucket/details
+    # https://developer.api.autodesk.com/oss/v2/buckets/<your bucket name>/details
 
     url = BASE_URL + 'oss/v2/buckets/' + BUCKET_KEY + '/details'
 
@@ -175,8 +175,8 @@ def main():
 
       # curl -k \
       # --header "Content-Type: application/json" --header "Authorization: Bearer fDqpZKYM7ExcC2694eQ1pwe8nwnW" \
-      # --data '{\"bucketKey\":\"mybucket\",\"policy\":\"transient\"}' \
-      # https://developer.api.autodesk.com/oss/v1/buckets
+      # --data '{\"bucketKey\":\"<your bucket name>\",\"policyKey\":\"transient\"}' \
+      # https://developer.api.autodesk.com/oss/v2/buckets
 
       url = BASE_URL + 'oss/v2/buckets'
 
@@ -191,7 +191,7 @@ def main():
       }
 
       print 'Step 3: Create a bucket'
-      print 'curl -k -H "Authorization: Bearer %s" -H "Content-Type:application/json" --data "{\\"bucketKey\\":\\"%s\\",\\"policy\\":\\"transient\\"}" %s' % (access_token, BUCKET_KEY, url)
+      print 'curl -k -H "Authorization: Bearer %s" -H "Content-Type:application/json" --data "{\\"bucketKey\\":\\"%s\\",\\"policyKey\\":\\"transient\\"}" %s' % (access_token, BUCKET_KEY, url)
 
       print url
       print json.dumps(data)
@@ -228,8 +228,8 @@ def main():
     # curl -k \
     # --header "Authorization: Bearer K16B98iaYNElzVheldlUAUqOoMRC" \
     # -H "Content-Type:application/octet-stream" \
-    # --upload-file "skyscpr1.3ds"
-    # -X PUT https://developer.api.autodesk.com/oss/v1/buckets/mybucket/objects/skyscpr1.3ds
+    # --upload-file "<your object name>"
+    # -X PUT https://developer.api.autodesk.com/oss/v2/buckets/<your bucket name>/objects/<your object name>
 
     filesize = os.path.getsize( model_filepath )
     model_filename = os.path.basename( model_filepath ).replace(' ', '+')
@@ -270,7 +270,7 @@ def main():
       # the following result:
       #
       # {
-      #   "bucket-key" : "jtbucket",
+      #   "bucket-key" : "<your bucket name>",
       #   "objects" : [ {
       #     "location" : "https://developer.api.autodesk.com/oss/v1/buckets/jtbucket/objects/two_columns_rvt",
       #     "size" : 4165632,
@@ -286,7 +286,7 @@ def main():
     print 'id:', urn
 
     # import base64
-    # base64.b64encode("urn:adsk.objects:os.object:jtbucket/two_columns_rvt")
+    # base64.b64encode("urn:adsk.objects:os.object:<your bucket name>/your object name")
     # 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6anRidWNrZXQvdHdvX2NvbHVtbnNfcnZ0'
 
     urn = base64.b64encode(urn)
@@ -298,7 +298,7 @@ def main():
   # -H "Content-Type: application/json" \
   # -H "Authorization:Bearer 1f4bEhzvxJ9CMvMPSHD4gXO4SYEr" \
   # -i -d "{\"urn\":\"dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bXlidWNrZXQvc2t5c2NwcjEuM2Rz\"}" \
-  # https://developer.api.autodesk.com/viewingservice/v1/register
+  # https://developer.api.autodesk.com/modelderivative/v2/designdata/job
 
   url = BASE_URL + 'modelderivative/v2/designdata/job'
 
@@ -323,7 +323,7 @@ def main():
     'Authorization' : 'Bearer ' + access_token
   }
 
-  print 'Step 6: Register data'
+  print 'Step 6: Request to translate the object'
   print 'curl -k -H "Authorization: Bearer %s" -H "Content-Type:application/json" -i -d "{\\"urn\\":\\"%s\\"}" %s' % (access_token, urn, url)
 
   print url
