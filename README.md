@@ -48,5 +48,7 @@ workflow-python is licensed under the terms of the [MIT License](http://opensour
 ## Written by
 
 Jeremy Tammik
+
 migrated by Xiaodong Liang
- Autodesk Inc.
+
+Autodesk Inc.
